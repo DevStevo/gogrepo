@@ -37,7 +37,7 @@ try:
     import cookielib as cookiejar
     from httplib import BadStatusLine
     from urlparse import urlparse
-    from urllib import urlencode
+    from urllib import urlencode, unquote
     from urllib2 import HTTPError, URLError, HTTPCookieProcessor, build_opener, Request
     from itertools import izip_longest as zip_longest
     from StringIO import StringIO
@@ -46,7 +46,7 @@ except ImportError:
     from queue import Queue
     import http.cookiejar as cookiejar
     from http.client import BadStatusLine
-    from urllib.parse import urlparse, urlencode
+    from urllib.parse import urlparse, urlencode, unquote
     from urllib.request import HTTPCookieProcessor, HTTPError, URLError, build_opener, Request
     from itertools import zip_longest
     from io import StringIO
@@ -802,7 +802,7 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
     # Find all items to be downloaded and push into work queue
     for item in sorted(items, key=lambda g: g.title):
         info("{%s}" % item.title)
-        item_homedir = os.path.join(savedir, item.title)
+        item_homedir = os.path.join(savedir, unquote(item.title))
         if not dryrun:
             if not os.path.isdir(item_homedir):
                 os.makedirs(item_homedir)
@@ -856,7 +856,7 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
         for game_item in item.downloads + item.extras:
             if game_item.name is None:
                 continue  # no game name, usually due to 404 during file fetch
-            dest_file = os.path.join(item_homedir, game_item.name)
+            dest_file = os.path.join(item_homedir, unquote(game_item.name))
 
             if os.path.isfile(dest_file):
                 if game_item.size is None:
